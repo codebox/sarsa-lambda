@@ -1,9 +1,9 @@
 class Strategy:
     def __init__(self):
-        pass
+        pass # TODO
 
     def new_episode(self):
-        pass
+        pass # TODO
 
     def next_action(self, state):
-        pass
+        pass # TODO
