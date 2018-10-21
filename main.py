@@ -22,11 +22,13 @@ def build_strategy():
 
 
 def load_from_file(strategy):
-    pass # TODO
+    data = None # TODO
+    strategy.load(data)
 
 
 def save_to_file(strategy):
-    pass # TODO
+    data = strategy.dump()
+    # TODO save data
 
 
 def run_episode(strategy):
