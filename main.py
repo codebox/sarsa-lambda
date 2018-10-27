@@ -1,4 +1,6 @@
-import signal, sys
+# -*- coding: utf-8 -*-
+
+import signal, sys, json
 
 from environment import Environment
 from strategy import Strategy
@@ -18,17 +20,32 @@ def build_environment():
 
 
 def build_strategy():
-    return Strategy()
+    γ = 0.99
+    α = 0.1
+    λ = 0.1
+    ε = 0.1
+    return Strategy(γ, α, λ, ε, Environment.actions)
 
 
 def load_from_file(strategy):
-    data = None # TODO
-    strategy.load(data)
+    try:
+        with open(SAVE_FILE) as f:
+            strategy.load(json.load(f))
 
+        print('Loaded', SAVE_FILE)
+
+    except:
+        pass
 
 def save_to_file(strategy):
-    data = strategy.dump()
-    # TODO save data
+    try:
+        with open(SAVE_FILE, 'w') as f:
+            json.dump(strategy.dump(), f)
+
+        # print('Saved', SAVE_FILE)
+
+    except:
+        pass
 
 
 def run_episode(strategy):
@@ -43,16 +60,14 @@ def run_episode(strategy):
         action = strategy.next_action(state_before)
         reward = environment.perform_action(action)
         state_after = environment.get_actor_state()
-        next_action = strategy.next_action(state_after)
-
-        strategy.update(state_before, action, reward, state_after, next_action)
+        strategy.update(state_before, action, reward, state_after)
         total_reward += reward
         steps += 1
 
     return steps, total_reward
 
 
-def save_and_exit():
+def save_and_exit(_1,_2):
     save_to_file(strategy)
     sys.exit(0)
 
@@ -63,7 +78,8 @@ load_from_file(strategy)
 
 for episode_index in range(EPISODE_COUNT):
     run_episode(strategy)
-    if episode_index % SAVE_INTERVAL == 0:
+    if episode_index > 0 and episode_index % SAVE_INTERVAL == 0:
         save_to_file(strategy)
+        print(episode_index)
 
 save_to_file(strategy)

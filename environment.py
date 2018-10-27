@@ -17,10 +17,11 @@ REWARD_MONSTER  = -100
 REWARD_EXIT     = 100
 
 class Environment:
+    actions = ACTIONS
+
     def __init__(self, width, height):
         self.width = width
         self.height = height
-        self.actions = ACTIONS
         self.actor_in_terminal_state = False
 
     def initialise(self):
@@ -68,8 +69,6 @@ class Environment:
         else:
             assert False, 'action=' + str(action)
 
-        requested_location_contents = None
-
         if actor_requested_x < 0 or actor_requested_x >= self.width or actor_requested_y < 0 or actor_requested_y >= self.height:
             requested_location_contents = STATE_BLOCK
         else:
@@ -100,6 +99,8 @@ class Environment:
 
         else:
             assert False, 'requested_location_contents=' + str(requested_location_contents)
+
+        return reward
 
     def _get_initial_content(self, x, y):
         return [
