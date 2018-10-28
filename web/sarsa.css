@@ -1,0 +1,6 @@
+#grid{
+    font-family: monospace;
+}
+#grid td {
+    width: 1em;
+}

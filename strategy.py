@@ -17,8 +17,8 @@ class Strategy:
     def new_episode(self):
         self.eligibility_traces = EligibilityTraces(1 - self.γ * self.λ)
 
-    def next_action(self, state):
-        return self.q_values.get_greedy_action(state, self.ε)
+    def next_action(self, state, ε=None):
+        return self.q_values.get_greedy_action(state, self.ε if ε is None else ε)
 
     def update(self, state_before, action, reward, state_after):
         expected_reward = self.q_values.get_expected_reward(state_before, action)

@@ -1,3 +1,5 @@
+import re
+
 ACTION_UP    = 'U'
 ACTION_RIGHT = 'R'
 ACTION_DOWN  = 'D'
@@ -19,30 +21,30 @@ REWARD_EXIT     = 100
 class Environment:
     actions = ACTIONS
 
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
+    def __init__(self, grid_text):
+        self.grid   = self.__parse_grid_text(grid_text)
+        self.height = len(self.grid)
+        self.width  = len(self.grid[0])
         self.actor_in_terminal_state = False
 
-    def initialise(self):
-        self._grid = []
-
         for y in range(self.height):
-            row = []
-            self._grid.append(row)
             for x in range(self.width):
-                content = self._get_initial_content(x, y)
+                content = self.grid[y][x]
 
                 if content == STATE_ACTOR:
                     self.actor_x = x
                     self.actor_y = y
 
-                row.append(content)
 
+    def __parse_grid_text(self, grid_text):
+        rows = re.split("\s*\n\s*", grid_text.strip())
+        return list(map(lambda row:row.split(' '), rows))
 
     def get_actor_state(self):
         return '{},{}'.format(self.actor_x, self.actor_y)
 
+    def get(self):
+        return self.grid
 
     def perform_action(self, action):
         reward = 0
@@ -72,13 +74,13 @@ class Environment:
         if actor_requested_x < 0 or actor_requested_x >= self.width or actor_requested_y < 0 or actor_requested_y >= self.height:
             requested_location_contents = STATE_BLOCK
         else:
-            requested_location_contents = self._grid[actor_requested_x][actor_requested_y]
+            requested_location_contents = self.grid[actor_requested_y][actor_requested_x]
 
         def move_actor_to_requested_location():
-            self._grid[self.actor_x][self.actor_y] = STATE_EMPTY
+            self.grid[self.actor_y][self.actor_x] = STATE_EMPTY
             self.actor_x = actor_requested_x
             self.actor_y = actor_requested_y
-            self._grid[self.actor_x][self.actor_y] = STATE_ACTOR
+            self.grid[self.actor_y][self.actor_x] = STATE_ACTOR
 
         if requested_location_contents == STATE_BLOCK:
             reward += REWARD_BAD_MOVE
@@ -101,17 +103,3 @@ class Environment:
             assert False, 'requested_location_contents=' + str(requested_location_contents)
 
         return reward
-
-    def _get_initial_content(self, x, y):
-        return [
-            '. . . . . . . . . .',
-            '. . . . . . . . . .',
-            '. . . . . . . . . .',
-            '. . . . . . . . . .',
-            '. X . . 웃 . . M . .',
-            '. . . . . . . . . .',
-            '. . . . . . . . . .',
-            '. . . . . . . . . .',
-            '. . . . . . . . . .',
-            '. . . . . . . . . .'
-        ][y].split(' ')[x]

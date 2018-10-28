@@ -12,12 +12,21 @@ ENVIRONMENT_HEIGHT=10
 ENVIRONMENT_WIDTH=10
 SAVE_FILE='sarsa.json'
 
+INIT_ENVIRONMENT="""
+    . . . . . . . . . .
+    . . . . . . . . . .
+    . . . . . . . . . .
+    . . M . . . . . . .
+    . X M . 웃 . . M . .
+    . M M . . . . . . .
+    . . . . . . . . . .
+    . . . . . . . . . .
+    . . . . . . . . . .
+    . . . . . . . . . .
+"""
 
 def build_environment():
-    environment = Environment(ENVIRONMENT_WIDTH, ENVIRONMENT_HEIGHT)
-    environment.initialise()
-    return environment
-
+    return Environment(INIT_ENVIRONMENT)
 
 def build_strategy():
     γ = 0.99
@@ -71,15 +80,17 @@ def save_and_exit(_1,_2):
     save_to_file(strategy)
     sys.exit(0)
 
-signal.signal(signal.SIGINT, save_and_exit) # handle ctrl-c
+if __name__ == '__main__':
+    signal.signal(signal.SIGINT, save_and_exit) # handle ctrl-c
 
-strategy = build_strategy()
-load_from_file(strategy)
+    strategy = build_strategy()
+    load_from_file(strategy)
 
-for episode_index in range(EPISODE_COUNT):
-    run_episode(strategy)
-    if episode_index > 0 and episode_index % SAVE_INTERVAL == 0:
-        save_to_file(strategy)
-        print(episode_index)
+    for episode_index in range(EPISODE_COUNT):
+        run_episode(strategy)
+        if episode_index > 0 and episode_index % SAVE_INTERVAL == 0:
+            save_to_file(strategy)
+            print(episode_index)
 
-save_to_file(strategy)
+    save_to_file(strategy)
+
