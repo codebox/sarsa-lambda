@@ -6,23 +6,23 @@ from environment import Environment
 from strategy import Strategy
 
 EPISODE_COUNT=1000 * 1000
-SAVE_INTERVAL=1000
+SAVE_INTERVAL=100
 MAX_EPISODE_STEPS=10000
 ENVIRONMENT_HEIGHT=10
 ENVIRONMENT_WIDTH=10
 SAVE_FILE='sarsa.json'
 
 INIT_ENVIRONMENT="""
-    . . . . . . . . . .
-    . . . . . . . M . .
-    . . █ █ █ █ █ . . .
-    . . █ . . . . . M .
-    M X █ . 웃 . . M . .
-    . . █ . . . . . M .
-    . M █ █ █ █ █ . . .
-    . . . . . . . M . .
-    . . . . . . . . . .
-    . . . . . . . . . .
+    . . . . . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . M . . . . . . . .
+    . . . . . . . . . 웃 . M . . . . . . . .
+    . . . . . . . . . . . M . . . . . . . .
+    . . . . . . . █ █ █ █ █ . . . . . . . .
+    . . . . . . . . █ X █ . . . . . . . . .
+    . . . . . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . . . . . .
 """
 
 def build_environment():
