@@ -35,8 +35,7 @@ class Environment:
                 content = self.grid[y][x]
 
                 if content == STATE_ACTOR:
-                    self.actor_x = x
-                    self.actor_y = y
+                    self.actor_pos = Position(x, y)
 
                 elif content == STATE_MONSTER:
                     self.monsters.append(Position(x, y))
@@ -46,10 +45,13 @@ class Environment:
         return list(map(lambda row:row.split(' '), rows))
 
     def get_actor_state(self):
-        return '{},{}'.format(self.actor_x, self.actor_y)
+        return str(self.actor_pos)
 
     def get(self):
         return self.grid
+
+    def __position_on_grid(self, pos):
+        return (0 <= pos.x < self.width) and (0 <= pos.y < self.height)
 
     def __get_valid_monster_moves(self, current_x, current_y):
         compass_directions = [
@@ -59,15 +61,12 @@ class Environment:
             Position(current_x, current_y - 1)
         ]
 
-        def on_grid(pos):
-            return (0 <= pos.x < self.width) and (0 <= pos.y < self.height)
-
         def can_move(pos):
             return self.grid[pos.y][pos.x] in [STATE_EMPTY, STATE_ACTOR]
 
-        possible_moves = list(filter(lambda pos: on_grid(pos) and can_move(pos), compass_directions))
+        possible_moves = list(filter(lambda pos: self.__position_on_grid(pos) and can_move(pos), compass_directions))
 
-        possible_moves.sort(key=lambda pos: (pos.x - self.actor_x) ** 2 + (pos.y - self.actor_y) ** 2)
+        possible_moves.sort(key=lambda pos: pos.dist_sq(self.actor_pos))
 
         return possible_moves
 
@@ -91,7 +90,7 @@ class Environment:
                 monster_position.x = new_pos.x
                 monster_position.y = new_pos.y
 
-                if new_pos.x == self.actor_x and new_pos.y == self.actor_y:
+                if new_pos == self.actor_pos:
                     self.actor_in_terminal_state = True
 
     def __update_environment(self):
@@ -100,38 +99,32 @@ class Environment:
     def perform_action(self, action):
         reward = 0
 
-        actor_requested_x = None
-        actor_requested_y = None
+        actor_requested_pos = self.actor_pos.copy()
 
         if action == ACTION_UP:
-            actor_requested_x = self.actor_x
-            actor_requested_y = self.actor_y + 1
+            actor_requested_pos.up()
 
         elif action == ACTION_RIGHT:
-            actor_requested_x = self.actor_x + 1
-            actor_requested_y = self.actor_y
+            actor_requested_pos.right()
 
         elif action == ACTION_DOWN:
-            actor_requested_x = self.actor_x
-            actor_requested_y = self.actor_y - 1
+            actor_requested_pos.down()
 
         elif action == ACTION_LEFT:
-            actor_requested_x = self.actor_x - 1
-            actor_requested_y = self.actor_y
+            actor_requested_pos.left()
 
         else:
             assert False, 'action=' + str(action)
 
-        if actor_requested_x < 0 or actor_requested_x >= self.width or actor_requested_y < 0 or actor_requested_y >= self.height:
-            requested_location_contents = STATE_BLOCK
+        if self.__position_on_grid(actor_requested_pos):
+            requested_location_contents = self.grid[actor_requested_pos.y][actor_requested_pos.x]
         else:
-            requested_location_contents = self.grid[actor_requested_y][actor_requested_x]
+            requested_location_contents = STATE_BLOCK
 
         def move_actor_to_requested_location():
-            self.grid[self.actor_y][self.actor_x] = STATE_EMPTY
-            self.actor_x = actor_requested_x
-            self.actor_y = actor_requested_y
-            self.grid[self.actor_y][self.actor_x] = STATE_ACTOR
+            self.grid[self.actor_pos.y][self.actor_pos.x] = STATE_EMPTY
+            self.actor_pos = actor_requested_pos
+            self.grid[self.actor_pos.y][self.actor_pos.x] = STATE_ACTOR
 
         if requested_location_contents == STATE_BLOCK:
             reward += REWARD_BAD_MOVE
@@ -162,3 +155,27 @@ class Position:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+
+    def dist_sq(self, other):
+        return (self.x - other.x) ** 2 + (self.y - other.y) ** 2
+
+    def copy(self):
+        return Position(self.x, self.y)
+
+    def up(self):
+        self.y -= 1
+
+    def down(self):
+        self.y += 1
+
+    def left(self):
+        self.x -= 1
+
+    def right(self):
+        self.x += 1
+
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+
+    def __repr__(self):
+        return '{},{}'.format(self.x, self.y)
