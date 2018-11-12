@@ -32,7 +32,15 @@ class MyRequestHandler(SimpleHTTPRequestHandler):
             action = strategy.next_action(state, 0)
             environment.perform_action(action)
 
-            response = {'env' : environment.get(), 'terminal' : environment.actor_in_terminal_state}
+            response = {
+                'env' : environment.get(),
+                'terminal' : environment.actor_in_terminal_state,
+                'stats' : {
+                    'ε' : strategy.ε,
+                    'scores' : strategy.scores,
+                    'episode' : strategy.episode
+                }
+            }
 
             return self.__send_json(response)
 

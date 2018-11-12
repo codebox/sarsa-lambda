@@ -7,22 +7,22 @@ from strategy import Strategy
 
 EPISODE_COUNT=1000 * 1000
 SAVE_INTERVAL=100
-MAX_EPISODE_STEPS=10000
+MAX_EPISODE_STEPS=100000
 ENVIRONMENT_HEIGHT=10
 ENVIRONMENT_WIDTH=10
 SAVE_FILE='sarsa.json'
 
 INIT_ENVIRONMENT="""
-    . . . . . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . M . . . . . . . .
-    . . . . . . . . . 웃 . M . . . . . . . .
-    . . . . . . . . . . . M . . . . . . . .
-    . . . . . . . █ █ █ █ █ . . . . . . . .
-    . . . . . . . . █ X █ . . . . . . . . .
-    . . . . . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . . . . . .
+    X . █ . █ . . . . .
+    . . █ . █ █ █ █ █ 웃
+    . . █ . . . . . . .
+    . █ █ . █ . █ █ █ .
+    M . . . █ . █ . M .
+    . █ █ . █ . █ █ █ .
+    . . █ . . . . . . .
+    █ █ █ █ █ █ █ █ █ .
+    . . . . . . . . . .
+    . . . . . . . . █ .
 """
 
 def build_environment():
@@ -33,7 +33,8 @@ def build_strategy():
     α = 0.1
     λ = 0.1
     ε = 0.1
-    return Strategy(γ, α, λ, ε, Environment.actions)
+    ε_decay = 1
+    return Strategy(γ, α, λ, ε, ε_decay, Environment.actions)
 
 
 def load_from_file(strategy):

@@ -18,7 +18,7 @@ REWARD_BAD_MOVE = -5
 REWARD_MONSTER  = -100
 REWARD_EXIT     = 100
 
-MONSTER_RANDOMNESS = 0.2
+MONSTER_RANDOMNESS = 0.1
 
 class Environment:
     actions = ACTIONS
@@ -60,6 +60,8 @@ class Environment:
             Position(current_x, current_y + 1),
             Position(current_x, current_y - 1)
         ]
+
+        random.shuffle(compass_directions)
 
         def can_move(pos):
             return self.grid[pos.y][pos.x] in [STATE_EMPTY, STATE_ACTOR]
@@ -137,6 +139,7 @@ class Environment:
             reward += REWARD_MOVEMENT + REWARD_EXIT
             move_actor_to_requested_location()
             self.actor_in_terminal_state = True
+            print("SUCCESS") # TODO
 
         elif requested_location_contents == STATE_MONSTER:
             reward += REWARD_MOVEMENT + REWARD_MONSTER

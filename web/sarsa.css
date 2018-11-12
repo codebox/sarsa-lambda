@@ -1,6 +1,26 @@
 #grid{
     font-family: monospace;
+    border-collapse: collapse;
+    border-spacing: 0;
 }
 #grid td {
     width: 1em;
+    background-color: #ebebeb;
+    margin: 0;
+    height: 1em;
+}
+.cell웃 {
+    background-image: url('images/player.png');
+    background-size: 100%;
+}
+.cellM {
+    background-image: url('images/ghost.png');
+    background-size: 100%;
+}
+.cellX {
+    background-image: url('images/finish.png');
+    background-size: 100%;
+}
+.cell█{
+    background-color: black ! important;
 }

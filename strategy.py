@@ -5,17 +5,25 @@ from q_values import QValues
 
 
 class Strategy:
-    def __init__(self, γ, α, λ, ε, actions):
+    def __init__(self, γ, α, λ, ε, ε_decay, actions):
         self.γ = γ
         self.α = α
         self.λ = λ
         self.ε = ε
+        self.ε_decay = ε_decay
         self.actions = actions
         self.eligibility_traces = None
         self.q_values = QValues(actions)
+        self.scores = [] # TODO
+        self.episode = 0
+        self.episode_reward = 0
+        self.episode_reward_total = 0 # TODO
 
     def new_episode(self):
         self.eligibility_traces = EligibilityTraces(1 - self.γ * self.λ)
+        self.ε *= self.ε_decay
+        self.episode += 1
+        self.episode_reward = 0
 
     def next_action(self, state, ε=None):
         return self.q_values.get_greedy_action(state, self.ε if ε is None else ε)
@@ -37,9 +45,18 @@ class Strategy:
             self.eligibility_traces.decay(state, action)
 
         self.q_values.for_each(update_q_values)
+        self.episode_reward += reward
 
     def load(self, values):
-        self.q_values.set_all_values(values)
+        self.q_values.set_all_values(values['q'])
+        self.ε = values['ε']
+        self.scores = values['scores']
+        self.episode = values['episode']
 
     def dump(self):
-        return self.q_values.get_all_values()
+        return {
+            'q' : self.q_values.get_all_values(),
+            'ε' : self.ε,
+            'scores' : self.scores,
+            'episode' : self.episode
+        }

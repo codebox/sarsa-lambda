@@ -9,13 +9,14 @@ function fetchJson(url, callback) {
 }
 
 const grid = document.getElementById('grid');
+
 function drawEnvironment(env) {
     const table = ['<table>'];
 
     env.forEach(row => {
         table.push('<tr>');
         row.forEach(cell => {
-            table.push(`<td>${cell}</td>`);
+            table.push(`<td class="cell${cell}"></td>`);
         });
         table.push('</tr>');
     });
