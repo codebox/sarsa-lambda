@@ -13,13 +13,13 @@ The video below shows the algorithm's progress learning a very basic (ghost-free
 player's moves are essentially random, however after playing about 100 games the player begins to take a reasonably direct route
 to the exit. After 1000 games the algorithm has discovered an optimal route.
 
-[![Watch the video](http://codebox.net/graphics/sarsa-lambda/sarsa_blank_poster.png)](http://codebox.net/graphics/sarsa-lambda/sarsa_blank.webm)
+[![Watch the video](https://codebox.net/assets/video/reinforcement-learning-sarsa-lambda/sarsa_blank_poster.png)](https://codebox.net/assets/video/reinforcement-learning-sarsa-lambda/sarsa_blank.webm)
 
 As would be expected, when tested against more complex environments the algorithm takes much longer to discover the best strategy
 (10s or 100s of thousands of games). In some cases quite ingenious tactics are employed to evade the ghosts, for example
 waiting in one location to draw the ghosts down a particular path, before taking a different route towards the exit:
 
-[![Watch the video](http://codebox.net/graphics/sarsa-lambda/sarsa_ghosts_poster.png)](http://codebox.net/graphics/sarsa-lambda/sarsa_ghosts.webm)
+[![Watch the video](https://codebox.net/assets/video/reinforcement-learning-sarsa-lambda/sarsa_ghosts_poster.png)](https://codebox.net/assets/video/reinforcement-learning-sarsa-lambda/sarsa_ghosts.webm)
 
 To run the code for yourself just clone the project,
 draw your own map [in the main.py file](https://github.com/codebox/sarsa-lambda/blob/master/main.py#L15), and
